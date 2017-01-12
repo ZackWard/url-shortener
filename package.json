@@ -1,0 +1,31 @@
+{
+  "name": "url-shortener",
+  "version": "0.0.1",
+  "description": "URL Shortener project for Free Code Camp",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node url-shortener.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZackWard/url-shortener.git"
+  },
+  "author": "Zack Ward",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZackWard/url-shortener/issues"
+  },
+  "homepage": "https://github.com/ZackWard/url-shortener#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "helmet": "^3.3.0",
+    "mongodb": "^2.2.19",
+    "validator": "^6.2.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0"
+  }
+}
