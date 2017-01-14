@@ -19,7 +19,9 @@ var urlOptions = {
 }
 
 var port = 3002;
+var dbUrl = (process.env['URL_SHORTENER_MODE'] == "test") ? "mongodb://localhost:27017/url-shortener-test" : "mongodb://localhost:27017/url-shortener";
 
+// Set up middleware here
 app.use(helmet());
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -59,7 +61,7 @@ app.post(['/new', '/api/shorturl/new'], function (req, res) {
     console.log("POST " + req.url);
     console.log("Long url: " + req.body.long_url);
     var longURL = String(req.body.long_url).substr(0, 4).toLowerCase() == "http" ? String(req.body.long_url) : "http://" + String(req.body.long_url);
-    if (isValidURL(longURL, UrlOptions)) {
+    if (isValidURL(longURL, urlOptions)) {
         db.addLink(longURL, function (err, newLink) {
             if (err) {
                 console.error(err);
@@ -86,14 +88,16 @@ app.get(['/:short_url', '/api/shorturl/:short_url'], function (req, res) {
 });
 
 // Start app
-db.connect(function (err) {
+db.connect(dbUrl, function (err) {
     if (err) {
         console.error("Unable to start Mongodb!");
         process.exit(1);
     }
     app.listen(port, 'localhost', function () {
+        console.log("URL_SHORTENER_MODE env variable is: " + process.env['URL_SHORTENER_MODE']);
         console.log("URL Shortener listening on port " + port);
     });
 });
 
-module.exports = app;
+module.exports.app = app;
+module.exports.db = db;

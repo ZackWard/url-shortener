@@ -4,8 +4,8 @@
   "description": "URL Shortener project for Free Code Camp",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "start": "node url-shortener.js"
+    "test": "set URL_SHORTENER_MODE=test&mocha",
+    "start": "set URL_SHORTENER_MODE=dev & node url-shortener.js"
   },
   "repository": {
     "type": "git",
