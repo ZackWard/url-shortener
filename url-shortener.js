@@ -19,15 +19,13 @@ var urlOptions = {
 }
 
 var port = 3002;
-var dbUrl = (process.env['URL_SHORTENER_MODE'] == "test") ? "mongodb://localhost:27017/url-shortener-test" : "mongodb://localhost:27017/url-shortener";
 
 // Set up middleware here
 app.use(helmet());
-app.use(express.static('public'));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use('/static', express.static('public'));
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function (req, res) {
-    console.log("GET " + req.url);
     res.sendFile(__dirname + "/public/new-link.html", function (err) {
         if (err) {
             console.error(err);
@@ -40,64 +38,43 @@ app.get('/', function (req, res) {
 app.get(/\/new\/(http(s?):\/\/)?(.*)/, function (req, res) {
     // If protocol wasn't included, default to http://
     var longUrl = req.params[0] == undefined ? "http://" + req.params[2] : req.params[0] + req.params[2];
-    console.log("GET " + req.url);
-    console.log(req.params);
-    console.log("Long url: " + longUrl);
     if (isValidURL(longUrl, urlOptions)) {
-        db.addLink(longUrl, function (err, newLink) {
-            if (err) {
-                console.error(err);
-                res.status(500).end("Error");
-            } else {
-                res.json(newLink);
-            }
-        });
+        db.addLink(longUrl)
+            .then((result) => {res.json(result)})
+            .catch((err) => {res.status(500).end(err)});
     } else {
         res.status(400).end("Cannot add URL: Invalid URL");
     }
 });
 
 app.post(['/new', '/api/shorturl/new'], function (req, res) {
-    console.log("POST " + req.url);
-    console.log("Long url: " + req.body.long_url);
     var longURL = String(req.body.long_url).substr(0, 4).toLowerCase() == "http" ? String(req.body.long_url) : "http://" + String(req.body.long_url);
     if (isValidURL(longURL, urlOptions)) {
-        db.addLink(longURL, function (err, newLink) {
-            if (err) {
-                console.error(err);
-                res.status(500).end("Error");
-            } else {
-                res.json(newLink);
-            }
-        });
+        db.addLink(longURL)
+            .then((result) => {res.json(result)})
+            .catch((err) => {res.status(500).end(err)});
     } else {
         res.status(400).end("Cannot add URL: Invalid URL");
     }
 });
 
 app.get(['/:short_url', '/api/shorturl/:short_url'], function (req, res) {
-    console.log("GET " + req.url);
-    db.getLink(req.params.short_url, function (err, link) {
-        if (err) {
-            console.log(err);
-            res.status(404).end("URL Not Found");
-        } else {
-            res.redirect(link);
-        }
-    });
+    db.getLink(req.params.short_url)
+        .then(function (link) { res.redirect(link); })
+        .catch(function (err) { res.status(404).end("URL Not Found"); });
 });
 
 // Start app
-db.connect(dbUrl, function (err) {
-    if (err) {
-        console.error("Unable to start Mongodb!");
+db.connect()
+    .then(function () {
+        app.listen(port, 'localhost', function () {
+            console.log("URL Shortener listening on port " + port);
+            });
+    })
+    .catch(function (err) {
+        console.log("Error connecting to database: " + err);
         process.exit(1);
-    }
-    app.listen(port, 'localhost', function () {
-        console.log("URL_SHORTENER_MODE env variable is: " + process.env['URL_SHORTENER_MODE']);
-        console.log("URL Shortener listening on port " + port);
     });
-});
 
 module.exports.app = app;
 module.exports.db = db;
