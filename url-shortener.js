@@ -48,7 +48,7 @@ app.get(/\/new\/(http(s?):\/\/)?(.*)/, function (req, res) {
             .then((result) => {res.json(result)})
             .catch((err) => {res.status(500).end(err)});
     } else {
-        res.status(400).json({"error": "Invalid URL"});
+        res.status(400).json({"error": "invalid URL"});
     }
 });
 
@@ -59,7 +59,7 @@ app.post(['/new', '/api/shorturl/new'], function (req, res) {
             .then((result) => {res.json(result)})
             .catch((err) => {res.status(500).end(err)});
     } else {
-        res.status(400).json({"error": "Invalid URL"});
+        res.status(400).json({"error": "invalid URL"});
     }
 });
 
