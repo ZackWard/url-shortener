@@ -48,18 +48,18 @@ app.get(/\/new\/(http(s?):\/\/)?(.*)/, function (req, res) {
             .then((result) => {res.json(result)})
             .catch((err) => {res.status(500).end(err)});
     } else {
-        res.status(400).end("Cannot add URL: Invalid URL");
+        res.status(400).json({"error": "Invalid URL"});
     }
 });
 
 app.post(['/new', '/api/shorturl/new'], function (req, res) {
-    var longURL = String(req.body.long_url).substr(0, 4).toLowerCase() == "http" ? String(req.body.long_url) : "http://" + String(req.body.long_url);
+    var longURL = String(req.body.url).substr(0, 4).toLowerCase() == "http" ? String(req.body.url) : "http://" + String(req.body.url);
     if (isValidURL(longURL, urlOptions)) {
         db.addLink(longURL)
             .then((result) => {res.json(result)})
             .catch((err) => {res.status(500).end(err)});
     } else {
-        res.status(400).end("Cannot add URL: Invalid URL");
+        res.status(400).json({"error": "Invalid URL"});
     }
 });
 

@@ -37,7 +37,7 @@ var checkLink = function checkLink(url) {
         if (state.db == null) {
             return reject("Database not available.");
         }
-        state.db.collection('urls').findOne({"long_url": url}, {fields: { "_id": 0 }}, function (err, doc) {
+        state.db.collection('urls').findOne({"original_url": url}, {fields: { "_id": 0 }}, function (err, doc) {
             if (err) {
                 return reject(err);
             } else if (doc == null) {
@@ -79,7 +79,7 @@ var addLink = function addLink(url) {
                     getMaxShortUrl()
                         .then(function(max_short_url) {
                             var newLink = {
-                                long_url: url,
+                                original_url: url,
                                 short_url: max_short_url + 1
                             };
                             state.db.collection('urls').insertOne(newLink, function(err, result) {
@@ -87,7 +87,7 @@ var addLink = function addLink(url) {
                                     return reject(err);
                                 } else {
                                     resolve({
-                                        long_url: newLink.long_url,
+                                        original_url: newLink.original_url,
                                         short_url: newLink.short_url
                                     });
                                 }
@@ -111,7 +111,7 @@ var getLink = function getLink(linkID) {
             if (err || doc == null) {
                 return reject(err);
             } else {
-                resolve(doc.long_url);
+                resolve(doc.original_url);
             }
         });
     });

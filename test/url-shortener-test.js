@@ -61,9 +61,9 @@ describe('GET /new/[url] (https://www.zackward.net)', function () {
         done();
     });
 
-    it("Should have a long_url field with a value of https://www.zackward.net", function (done) {
-        expect(res.body).to.have.property('long_url');
-        expect(res.body.long_url).to.equal("https://www.zackward.net");
+    it("Should have a original_url field with a value of https://www.zackward.net", function (done) {
+        expect(res.body).to.have.property('original_url');
+        expect(res.body.original_url).to.equal("https://www.zackward.net");
         done();
     });
 });
@@ -85,6 +85,17 @@ describe('GET /new/blah (Invalid Input)', function () {
         expect(res).to.be.status(400);
         done();
     });
+
+    it("Should return a json object", function (done) {
+        expect(res).to.be.json;
+        done();
+    });
+
+    it("Should have an error field with the value of 'Invalid URL'", function (done) {
+        expect(res.body).to.have.property('error');
+        expect(res.body.error).to.equal('Invalid URL');
+        done();
+    });
 });
 
 describe('POST /new (https://news.google.com)', function () {
@@ -93,7 +104,7 @@ describe('POST /new (https://news.google.com)', function () {
         chai.request(server)
             .post('/new')
             .type('form')
-            .send({long_url: "https://news.google.com"})
+            .send({url: "https://news.google.com"})
             .end(function (err, response) {
                 if (err) {
                     done(err);
@@ -120,9 +131,9 @@ describe('POST /new (https://news.google.com)', function () {
         done();
     });
 
-    it("Should have a long_url field with a value of https://news.google.com", function (done) {
-        expect(res.body).to.have.property('long_url');
-        expect(res.body.long_url).to.equal("https://news.google.com");
+    it("Should have a original_url field with a value of https://news.google.com", function (done) {
+        expect(res.body).to.have.property('original_url');
+        expect(res.body.original_url).to.equal("https://news.google.com");
         done();
     });
 });
@@ -133,7 +144,7 @@ describe('POST /api/shorturl/new (http://www.freecodecamp.com)', function () {
         chai.request(server)
             .post('/api/shorturl/new')
             .type('form')
-            .send({long_url: "http://www.freecodecamp.com"})
+            .send({url: "http://www.freecodecamp.com"})
             .end(function (err, response) {
                 if (err) {
                     done(err);
@@ -160,9 +171,9 @@ describe('POST /api/shorturl/new (http://www.freecodecamp.com)', function () {
         done();
     });
 
-    it("Should have a long_url field with a value of http://www.freecodecamp.com", function (done) {
-        expect(res.body).to.have.property('long_url');
-        expect(res.body.long_url).to.equal("http://www.freecodecamp.com");
+    it("Should have a original_url field with a value of http://www.freecodecamp.com", function (done) {
+        expect(res.body).to.have.property('original_url');
+        expect(res.body.original_url).to.equal("http://www.freecodecamp.com");
         done();
     });
 });
