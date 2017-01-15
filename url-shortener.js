@@ -21,9 +21,14 @@ var urlOptions = {
 var port = 3002;
 
 // Set up middleware here
+var allowCrossDomain = function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+};
 app.use(helmet());
 app.use('/static', express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(allowCrossDomain);
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + "/public/new-link.html", function (err) {
